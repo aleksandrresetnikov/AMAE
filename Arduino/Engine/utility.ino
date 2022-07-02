@@ -81,6 +81,12 @@ void fade() {
   }
 }
 
+void drawMap(CRGB bitmap[]){
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = bitmap[i];
+  }
+}
+
 // координатная позиция 2D
 struct Vector2I{
   Vector2I();
