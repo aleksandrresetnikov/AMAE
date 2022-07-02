@@ -81,11 +81,6 @@ void fade() {
   }
 }
 
-// перезапуск таймера автоматической смены режимов
-void resetTimerAutoSwitchingModes(){
-  timerAutoSwitchingModes = millis() + (TIME_AUTO_MODE_CHANGEOVER * 1000);
-}
-
 // координатная позиция 2D
 struct Vector2I{
   Vector2I();
@@ -111,16 +106,6 @@ void dynamicRandomMeneger(){
     randomSeed(analogRead(MY_RANDOM_SIDE));
   else 
     randomSeed(micros());
-}
-
-// бегущая строка
-void ticker(String text, CRGB textColor, boolean clear){
-  resetString();
-  FastLED.setBrightness(BRIGHTNESS_WHEN_OUTPUT_TEXT);
-  for (;;){
-    if (fillString(text, textColor, clear))break;
-    FastLED.show();
-  }
 }
 
 extern int __bss_end;
