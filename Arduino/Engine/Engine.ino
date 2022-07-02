@@ -40,12 +40,13 @@ uint32_t loop_timer = millis();
 void loop() {
   loop_timer = millis();
   
-  clearAll();
-  //sparklesRoutine();
+  for (int8_t x = 0; x < WIDTH; x++)
+    for (int8_t y = 0; y < HEIGHT; y++)
+      drawPixelXY(x, y, randomColor());
   
   FastLED.show();
   delayFPS();
-  printFPS();
+  //printFPS();
 }
 
 void delayFPS(){
