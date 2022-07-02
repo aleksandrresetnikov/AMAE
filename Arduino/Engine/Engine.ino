@@ -1,4 +1,6 @@
+#include <ESP8266WiFi.h>
 #include <FastLED.h>
+#include <ESP8266WiFiMulti.h>
 
 #define WIDTH 16                      // ширина матрицы
 #define HEIGHT 16                     // высота матрицы
@@ -7,16 +9,21 @@
 #define NUM_LEDS WIDTH * HEIGHT       // количество светтодиодов
 #define CURRENT_LIMIT 0               // лимит по току в миллиамперах, автоматически управляет яркостью (пожалей свой блок питания!) 0 - выключить лимит
 
-#define CHIPSET     NEOPIXEL
+#define CHIPSET NEOPIXEL
 #define FRAMES_PER_SECOND 60 //fps
 
 #define DYNAMIC_RANDOM_NUMBERS 1      // динамическая генерация сида рандома
 #define DYNAMIC_RANDOM_TYPE 4         // тип динамической генерации сида рандома 1 - по времени, 2 - по времени2, 3 - по времени3, 4 - шум, 5 - свой сид
-#define PIN_DYNAMIC_RANDOM_TYPE A5    // если тип динамической генерации сида рандома 4 (шум), то будет использоваться этот пин для сида (не в коем случае на подключать резистр на этот пин)
+#define PIN_DYNAMIC_RANDOM_TYPE 5     // если тип динамической генерации сида рандома 4 (шум), то будет использоваться этот пин для сида (не в коем случае на подключать резистр на этот пин)
 #define MY_RANDOM_SIDE 0              // если тип динамической генерации сида рандома 5 (свой сид), то будет использоваться этот сид
+
+const char* ssid = "Keenetic-3363";
+const char* password = "JeckDog093";
 
 uint8_t CentreX =  (WIDTH / 2) - 1;
 uint8_t CentreY = (HEIGHT / 2) - 1;
+ESP8266WiFiMulti wifiMulti;
+WiFiServer server(80);
 CRGB leds[NUM_LEDS];
 byte brightness = BRIGHTNESS;
 
@@ -27,7 +34,7 @@ struct {
 } modes[1];
 
 CRGB bitmap[] = {
--3355444,-3355444,-3355444,-3355444,-3355444,-3355444,-6720871,-10664867,-10664867,-10664867,-10664867,-10664867,-10664867,-6720871,-3355444,-3355444,
+0,-3355444,-3355444,-3355444,-3355444,-3355444,-6720871,-10664867,-10664867,-10664867,-10664867,-10664867,-10664867,-6720871,-3355444,-3355444,
 -3355444,-3355444,-3355444,-3355444,-3355444,-6710887,-13424837,-13424838,-13424839,-13424839,-13424839,-13424839,-13490630,-13228229,-6710887,-3355444,
 -3355444,-3355444,-3355444,-3355444,-6710887,-13293767,-10932682,-9752780,-9687244,-9687244,-9687244,-9687244,-9687244,-11261130,-13228229,-6720871,
 -3355444,-3355444,-3355444,-13092790,-13358790,-11130058,-7064271,-1817556,-1287108,-1421773,-1489876,-1489876,-1555412,-7916750,-11260873,-13162693,
@@ -52,7 +59,27 @@ void setup() {
   if (CURRENT_LIMIT > 0) 
     FastLED.setMaxPowerInVoltsAndMilliamps(5, CURRENT_LIMIT);
 
-  Serial.begin(9600);
+  Serial.begin(115200);
+  WiFistart();
+}
+
+void WiFistart() {
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");
+
+  Serial.print("LocalIP : ");
+  Serial.println(WiFi.localIP());
 }
 
 uint32_t loop_timer = millis();
@@ -63,7 +90,9 @@ void loop() {
     for (int8_t y = 0; y < HEIGHT; y++)
       drawPixelXY(x, y, 0xC144B2);*/
 
+  clearAll();
   drawMap(bitmap);
+  serberLoop();
   
   FastLED.show();
   delayFPS();
@@ -77,6 +106,13 @@ void delayFPS(){
 void printFPS(){
   if (millis()-loop_timer == 0) Serial.println(1000);
   Serial.println(1000/(millis()-loop_timer));
+}
+
+void serberLoop(){
+  WiFiClient client = server.available();
+  if (client.available()){
+    Serial.println(client.readStringUntil('\r'));
+  }
 }
 
 void sparklesRoutine() {

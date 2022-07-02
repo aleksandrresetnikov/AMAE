@@ -1,0 +1,12 @@
+A:\Александр\Arduino прочее\AMAE\AMAE\bin\Debug\AMAE.exe.config
+A:\Александр\Arduino прочее\AMAE\AMAE\bin\Debug\AMAE.exe
+A:\Александр\Arduino прочее\AMAE\AMAE\bin\Debug\AMAE.pdb
+A:\Александр\Arduino прочее\AMAE\AMAE\obj\Debug\AMAE.csproj.AssemblyReference.cache
+A:\Александр\Arduino прочее\AMAE\AMAE\obj\Debug\AMAE.Properties.Resources.resources
+A:\Александр\Arduino прочее\AMAE\AMAE\obj\Debug\AMAE.csproj.GenerateResource.cache
+A:\Александр\Arduino прочее\AMAE\AMAE\obj\Debug\AMAE.csproj.CoreCompileInputs.cache
+A:\Александр\Arduino прочее\AMAE\AMAE\obj\Debug\AMAE.exe
+A:\Александр\Arduino прочее\AMAE\AMAE\obj\Debug\AMAE.pdb
+A:\Александр\Arduino прочее\AMAE\AMAE\obj\Debug\AMAE.MatrixView.resources
+A:\Александр\Arduino прочее\AMAE\AMAE\obj\Debug\AMAE.Form1.resources
+A:\Александр\Arduino прочее\AMAE\AMAE\bin\Debug\Player1.png

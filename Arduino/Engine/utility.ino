@@ -88,7 +88,7 @@ void drawMap(CRGB bitmap[]){
 }
 
 // координатная позиция 2D
-struct Vector2I{
+/*struct Vector2I{
   Vector2I();
   Vector2I(int _X, int _Y){
     X = _X;
@@ -96,7 +96,7 @@ struct Vector2I{
   }
   int X;
   int Y;
-};
+};*/
 
 // динамическая генерацая случайных чисел
 void dynamicRandomMeneger(){
