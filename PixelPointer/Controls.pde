@@ -112,11 +112,12 @@ class Control {
   }
   
   public void SetBorders(){
+    
     if (!this.Colors.DrawBorders) { noStroke(); return; }
     
-    if (this.Hover && !this.Press) stroke(this.Text.TextColors.HoverBorderColor);
-    else if (this.Hover && this.Press) stroke(this.Text.TextColors.PressBorderColor);
-    else stroke(this.Text.TextColors.NormalBorderColor);
+    if (this.Hover && !this.Press) stroke(this.Colors.HoverBorderColor);
+    else if (this.Hover && this.Press) stroke(this.Colors.PressBorderColor);
+    else stroke(this.Colors.NormalBorderColor);
   }
   
   protected final void InvokeHoverAction(){
@@ -133,6 +134,11 @@ class Control {
       PressAction.Invoke();
       this.PressActionTimer = millis() + InvokeDelay;
     }
+  }
+  
+  public void ResetActionTimers(){
+    this.HoverActionTimer = millis() - 1;
+    this.PressActionTimer = millis() - 1;
   }
 }
 
@@ -235,8 +241,8 @@ class Button extends Control {
   }
   
   protected void DrawIcon(){
-    int IconX = super.PosX + (super.SizeX / 2) + (this.ButtonIcon.SizeX) + this.ButtonIcon.CorrectPosX;
-    int IconY = super.PosY + (super.SizeY / 2) + (this.ButtonIcon.SizeY) + this.ButtonIcon.CorrectPosY;
+    int IconX = super.PosX + (super.SizeX / 2) - (this.ButtonIcon.SizeX / 2) + this.ButtonIcon.CorrectPosX;
+    int IconY = super.PosY + (super.SizeY / 2) - (this.ButtonIcon.SizeY / 2) + this.ButtonIcon.CorrectPosY;
     
     if (super.Hover && !super.Press) image(this.ButtonIcon.HoverImage, IconX, IconY);
     else if (super.Hover && super.Press) image(this.ButtonIcon.PressImage, IconX, IconY);
@@ -397,6 +403,24 @@ class Icon {
   public PImage NormalImage;
   public PImage HoverImage;
   public PImage PressImage;
+  
+  public Icon(PImage NormalImage) {
+    this.NormalImage = NormalImage;
+    this.HoverImage = NormalImage;
+    this.PressImage = NormalImage;
+  }
+  
+  public Icon(PImage NormalImage, int SizeX, int SizeY) {
+    this(NormalImage);
+    this.SizeX = SizeX;
+    this.SizeY = SizeY;
+  }
+  
+  public Icon(PImage NormalImage, int SizeX, int SizeY, int CorrectPosX, int CorrectPosY) {
+    this(NormalImage, SizeX, SizeY);
+    this.CorrectPosX = CorrectPosX;
+    this.CorrectPosY = CorrectPosY;
+  }
   
   public Icon(PImage NormalImage, PImage HoverImage, PImage PressImage) {
     this.NormalImage = NormalImage;
