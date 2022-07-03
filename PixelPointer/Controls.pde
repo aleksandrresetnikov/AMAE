@@ -1,5 +1,5 @@
-public final ColorsList DefaultColorsList = new ColorsList(#FAFAFA, #D1D1D1, #A7A7A7);
-public final ColorsList DefaultTextColorsList = new ColorsList(#FAFAFA, #D1D1D1, #A7A7A7);
+public final ColorsList DefaultColorsList     = new ColorsList(#FAFAFA, #D1D1D1, #A7A7A7);
+public final ColorsList DefaultTextColorsList = new ColorsList(#1F1F1F, #434242, #FFFFFF);
 
 class Control {
   // location:
@@ -9,7 +9,8 @@ class Control {
   public int SizeY;
   
   // appearance:
-  public ColorsList Colors;
+  public ColorsList Colors = new ColorsList();
+  public TextProperties Text = null;
   public boolean Visible = true;
   
   public boolean Hover;
@@ -20,46 +21,78 @@ class Control {
     this.PosY = PosY;
     this.SizeX = SizeX;
     this.SizeY = SizeY;
-    this.Colors = new ColorsList();
+    //this.Colors = new ColorsList();
+    //this.Text = null;
   }
   
   public Control(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors) {
-    this.PosX = PosX;
-    this.PosY = PosY;
-    this.SizeX = SizeX;
-    this.SizeY = SizeY;
+    this(PosX, PosY, SizeX, SizeY);
     this.Colors = Colors;
   }
   
-  public Control(int PosX, int PosY, int SizeX, int SizeY) {
-    this.PosX = PosX;
-    this.PosY = PosY;
-    this.SizeX = SizeX;
-    this.SizeY = SizeY;
-    this.Colors = new ColorsList();
+  public Control(int PosX, int PosY, int SizeX, int SizeY, TextProperties Text) {
+    this(PosX, PosY, SizeX, SizeY);
+    this.Text = Text;
   }
   
-  public Control(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors) {
-    this.PosX = PosX;
-    this.PosY = PosY;
-    this.SizeX = SizeX;
-    this.SizeY = SizeY;
-    this.Colors = Colors;
+  public Control(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, TextProperties Text) {
+    this(PosX, PosY, SizeX, SizeY, Colors);
+    this.Text = Text;
+  }
+  
+  public Control(int PosX, int PosY, int SizeX, int SizeY, boolean Visible) {
+    this(PosX, PosY, SizeX, SizeY);
+    this.Visible = Visible;
+  }
+  
+  public Control(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, boolean Visible) {
+    this(PosX, PosY, SizeX, SizeY, Colors);
+    this.Visible = Visible;
+  }
+  
+  public Control(int PosX, int PosY, int SizeX, int SizeY, TextProperties Text, boolean Visible) {
+    this(PosX, PosY, SizeX, SizeY, Text);
+    this.Visible = Visible;
+  }
+  
+  public Control(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, TextProperties Text, boolean Visible) {
+    this(PosX, PosY, SizeX, SizeY, Colors, Text);
+    this.Visible = Visible;
   }
   
   public void Draw() {
-    this.updateHoverStatys();
-    this.updatePressStatys();
+    this.UpdateHoverStatys();
+    this.UpdatePressStatys();
+    this.SetColor();
   }
   
-  private void updateHoverStatys(){
+  protected void DrawText(){ 
+    textSize(Text.TextSize);
+    
+    this.SetTextColor();
+    
+    text(this.Text.Text, this.PosX, SizeY / 2 + (this.Text.TextSize / 2.5));
+  }
+  
+  protected void UpdateHoverStatys(){
     this.Hover = mouseX >= this.PosX && mouseX <= this.PosX + this.SizeX &&
                  mouseY >= this.PosY && mouseY <= this.PosY + this.SizeY;
   }
   
-  private void updatePressStatys(){
-    this.Hover = mouseX >= this.PosX && mouseX <= this.PosX + this.SizeX &&
-                 mouseY >= this.PosY && mouseY <= this.PosY + this.SizeY;
+  protected void UpdatePressStatys(){
+    this.Press = this.Hover && mousePressed;
+  }
+  
+  protected void SetColor(){
+    if (this.Hover && !this.Press) fill(this.Colors.HoverColor);
+    else if (this.Hover && this.Press) fill(this.Colors.PressColor);
+    else fill(this.Colors.NormalColor);
+  }
+  
+  protected void SetTextColor(){
+    if (this.Hover && !this.Press) fill(this.Text.TextColors.HoverColor);
+    else if (this.Hover && this.Press) fill(this.Text.TextColors.PressColor);
+    else fill(this.Text.TextColors.NormalColor);
   }
 }
 
@@ -71,6 +104,9 @@ class Button extends Control {
   @Override
   public void Draw() {
     super.Draw();
+    
+    rect(super.PosX, super.PosY, super.SizeX, super.SizeY);
+    super.DrawText();
   }
 }
 
@@ -96,8 +132,39 @@ class TextProperties {
   public String Text = "";
   public int TextSize = 10;
   public boolean TextVisible = false;
-  public ColorsList TextColorList = DefaultTextColorsList;
+  public ColorsList TextColors = DefaultTextColorsList;
   
   public TextProperties(String Text) { 
+    this.Text = Text;
+  }
+  
+  public TextProperties(String Text, ColorsList TextColors) { 
+    this(Text);
+    this.TextColors = TextColors;
+  }
+  
+  public TextProperties(String Text, int TextSize) { 
+    this(Text);
+    this.TextSize = TextSize;
+  }
+  
+  public TextProperties(String Text, boolean TextVisible) { 
+    this(Text);
+    this.TextVisible = TextVisible;
+  }
+  
+  public TextProperties(String Text, int TextSize, ColorsList TextColors) { 
+    this(Text, TextSize);
+    this.TextColors = TextColors;
+  }
+  
+  public TextProperties(String Text, int TextSize, boolean TextVisible) { 
+    this(Text, TextSize);
+    this.TextVisible = TextVisible;
+  }
+  
+  public TextProperties(String Text, int TextSize, ColorsList TextColors, boolean TextVisible) { 
+    this(Text, TextSize, TextColors);
+    this.TextVisible = TextVisible;
   }
 }
