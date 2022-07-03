@@ -36,6 +36,16 @@ void draw(){
   drawGUI();
 }
 
+void keyPressed(){
+  if (key == ENTER) saveMatrixData();
+  if (keyCode == 37) undo();
+  if (keyCode == 39) redo();
+}
+
+void mousePressed(){
+  updateGUI();
+}
+
 void updateSelectPixel(){
   if (mouseX >= 0 && mouseX <= 800 && mouseY >= 50 && mouseY <= 850){
     selectFlagX = (mouseX / ((800) / flagWidthHeight));
@@ -138,12 +148,6 @@ void checkSelectColor(){
     fill(flags[selectFlagX][selectFlagY]);
     rect(1000, 550, 100, 100);
   }
-}
-
-void keyPressed(){
-  if (key == ENTER) saveMatrixData();
-  if (keyCode == 37) undo();
-  if (keyCode == 39) redo();
 }
 
 int lastUndo = -1;

@@ -65,13 +65,14 @@ class Control {
     this.UpdateHoverStatys();
     this.UpdatePressStatys();
     this.SetColor();
+    this.SetBorders();
   }
   
   protected void DrawText(){ 
     if (this.Text == null) return;
     
-    this.SetTextColor();
     this.Text.SetFont();
+    this.SetTextColor();
     textSize(Text.TextSize);
     textAlign(RIGHT);
     text(this.Text.Text, this.PosX + this.SizeX / 2 + (textWidth(this.Text.Text) / 2),
@@ -97,6 +98,14 @@ class Control {
     if (this.Hover && !this.Press) fill(this.Text.TextColors.HoverColor);
     else if (this.Hover && this.Press) fill(this.Text.TextColors.PressColor);
     else fill(this.Text.TextColors.NormalColor);
+  }
+  
+  public void SetBorders(){
+    if (!this.Colors.DrawBorders) { noStroke(); return; }
+    
+    if (this.Hover && !this.Press) stroke(this.Text.TextColors.HoverBorderColor);
+    else if (this.Hover && this.Press) stroke(this.Text.TextColors.PressBorderColor);
+    else stroke(this.Text.TextColors.NormalBorderColor);
   }
 }
 
@@ -157,22 +166,22 @@ class ColorsList{
     this.NormalColor = DefaultColorsList.NormalColor;
     this.HoverColor  = DefaultColorsList.HoverColor;
     this.PressColor  = DefaultColorsList.PressColor;
-    this.NormalColor = DefaultColorsList.NormalBorderColor;
-    this.HoverColor  = DefaultColorsList.HoverBorderColor;
-    this.PressColor  = DefaultColorsList.PressBorderColor;
+    this.NormalBorderColor = DefaultColorsList.NormalBorderColor;
+    this.HoverBorderColor  = DefaultColorsList.HoverBorderColor;
+    this.PressBorderColor  = DefaultColorsList.PressBorderColor;
   }
   
   public ColorsList(color NormalColor, color HoverColor, color PressColor){
     this.NormalColor = NormalColor;
     this.HoverColor  = HoverColor;
     this.PressColor  = PressColor;
-    this.NormalColor = DefaultColorsList.NormalBorderColor;
-    this.HoverColor  = DefaultColorsList.HoverBorderColor;
-    this.PressColor  = DefaultColorsList.PressBorderColor;
+    this.NormalBorderColor = DefaultColorsList.NormalBorderColor;
+    this.HoverBorderColor  = DefaultColorsList.HoverBorderColor;
+    this.PressBorderColor  = DefaultColorsList.PressBorderColor;
   }
   
   public ColorsList(color NormalColor, color HoverColor, color PressColor, 
-  color NormalBorderColor, color HoverBorderColor, color PressBorderColor){
+    color NormalBorderColor, color HoverBorderColor, color PressBorderColor){
     this.NormalColor = NormalColor;
     this.HoverColor  = HoverColor;
     this.PressColor  = PressColor;
@@ -185,14 +194,14 @@ class ColorsList{
     this.NormalColor = NormalColor;
     this.HoverColor  = HoverColor;
     this.PressColor  = PressColor;
-    this.NormalColor = DefaultColorsList.NormalBorderColor;
-    this.HoverColor  = DefaultColorsList.HoverBorderColor;
-    this.PressColor  = DefaultColorsList.PressBorderColor;
+    this.NormalBorderColor = DefaultColorsList.NormalBorderColor;
+    this.HoverBorderColor  = DefaultColorsList.HoverBorderColor;
+    this.PressBorderColor  = DefaultColorsList.PressBorderColor;
     this.DrawBorders = DrawBorders;
   }
   
   public ColorsList(color NormalColor, color HoverColor, color PressColor, 
-  color NormalBorderColor, color HoverBorderColor, color PressBorderColor, boolean DrawBorders){
+    color NormalBorderColor, color HoverBorderColor, color PressBorderColor, boolean DrawBorders){
     this.NormalColor = NormalColor;
     this.HoverColor  = HoverColor;
     this.PressColor  = PressColor;
@@ -282,5 +291,17 @@ class TextProperties {
   public void SetFont(){
     if (this.TextFont == null) return;
     textFont(this.TextFont);
+  }
+}
+
+class Icon {
+  public PImage NormalImage;
+  public PImage HoverImage;
+  public PImage PressImage;
+  
+  public Icon(PImage NormalImage, PImage HoverImage, PImage PressImage) {
+    this.NormalImage = NormalImage;
+    this.HoverImage = HoverImage;
+    this.PressImage = PressImage;
   }
 }
