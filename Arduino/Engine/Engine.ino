@@ -9,7 +9,7 @@
 #define CURRENT_LIMIT 0               // лимит по току в миллиамперах, автоматически управляет яркостью (пожалей свой блок питания!) 0 - выключить лимит
 
 #define CHIPSET NEOPIXEL
-#define FRAMES_PER_SECOND 4 //fps
+#define FRAMES_PER_SECOND 12 //fps
 
 #define DYNAMIC_RANDOM_NUMBERS 1      // динамическая генерация сида рандома
 #define DYNAMIC_RANDOM_TYPE 4         // тип динамической генерации сида рандома 1 - по времени, 2 - по времени2, 3 - по времени3, 4 - шум, 5 - свой сид
@@ -98,7 +98,6 @@ void loop() {
   drawPixelXY(10, 1, CRGB::White);
   drawPixelXY(10, 2, CRGB::Blue);*/
   
-  FastLED.show();
   //delayFPS();
   //printFPS(); // http://192.168.1.36:8888/
 }
@@ -132,7 +131,7 @@ void serverLoop(){
   for (int s = 0; s < parts; s++){
     yield();
     String inText = getPart(req, ',', s);
-    int x = 0,
+    /*int x = 0,
         y = 0,
         c = 0,
         teg = 0;
@@ -149,8 +148,10 @@ void serverLoop(){
       save += inText[i];
     }
 
-    drawPixelXY(x, y, c);
+    drawPixelXY(x, y, c);*/
+    leds[s] = inText.toInt();
   }
+  FastLED.show();
 }
 
 void sparklesRoutine() {

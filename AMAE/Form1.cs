@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Threading;
+using System.Net;
+using System.IO;
 
 namespace AMAE
 {
@@ -39,7 +41,30 @@ namespace AMAE
 
         public void MatrixLoop()
         {
-            
+            UInt64 loopCount = 0;
+            Random random = new Random();
+            int frame = 1;
+            while (true) 
+            {
+                if (!MatrixStreamLoop) continue;
+                Console.WriteLine(++loopCount);
+
+                string outputHttpGetValue = "http://192.168.1.36:8888/";
+                for (int _x = 15; _x >= 0; _x--)
+                {
+                    if (_x % 2 != 0)
+                        for (int _y = 0; _y < 16; _y++)
+                            outputHttpGetValue += $"{bitmaps[frame][_y][_x].ToArgb()},";
+                    else
+                        for (int _y = 15; _y >= 0; _y--)
+                            outputHttpGetValue += $"{bitmaps[frame][_y][_x].ToArgb()},";
+                }
+                //Console.WriteLine(outputHttpGetValue);
+                HttpGet(outputHttpGetValue);
+
+                frame++;
+                if (frame > bitmaps.Count) frame = 1;
+            }
         }
 
         public void CreateBitmap()
@@ -186,6 +211,28 @@ namespace AMAE
         private void button4_Click(object sender, EventArgs e)
         {
             CreateBitmap();
+        }
+
+        private static string HttpGet(string URI)
+        {
+            try
+            {
+                WebClient client = new WebClient();
+
+                client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+
+                Stream data = client.OpenRead(URI);
+                StreamReader reader = new StreamReader(data);
+                string s = reader.ReadToEnd();
+                data.Close();
+                reader.Close();
+
+                return s;
+            }
+            catch
+            {
+                return "#nodata";
+            }
         }
     }
 }
