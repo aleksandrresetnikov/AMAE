@@ -121,16 +121,18 @@ class Control {
   
   protected final void InvokeHoverAction(){
     if (this.InvokeDelay > -1 && this.HoverActionTimer > millis()) return;
-    if (this.HoverAction != null && this.Hover) HoverAction.Invoke();
-    
-    this.HoverActionTimer = millis() + InvokeDelay;
+    if (this.HoverAction != null && this.Hover) {
+      HoverAction.Invoke();
+      this.HoverActionTimer = millis() + InvokeDelay;
+    }
   }
   
   protected final void InvokePressAction(){
     if (this.InvokeDelay > -1 && this.PressActionTimer > millis()) return;
-    if (this.PressAction != null && this.Press) PressAction.Invoke();
-    
-    this.PressActionTimer = millis() + InvokeDelay;
+    if (this.PressAction != null && this.Press) {
+      PressAction.Invoke();
+      this.PressActionTimer = millis() + InvokeDelay;
+    }
   }
 }
 
