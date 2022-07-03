@@ -1,5 +1,15 @@
-final int flagWidthHeight = 16;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.NotDirectoryException;
+import java.nio.file.Files;
+import java.nio.file.DirectoryStream;
+import java.util.*;
 
+final int flagWidthHeight = 16;
+final int flagsUndoBufferMaxCountValue = 1500;
+
+ArrayList<color[][]> flagsUndoBuffer = new ArrayList<color[][]>();
+PrintWriter output;
 color[][] flags = new color[flagWidthHeight][flagWidthHeight];
 color selectColor;
 int selectFlagX = 0;
@@ -7,13 +17,14 @@ int selectFlagY = 0;
 
 void setup(){
   size(1150, 850);
-  frameRate(120);
+  frameRate(60);
   smooth(8);
   colorMode(HSB,250);
   
   selectColor = color(#FFFFFF);
   drawInterface();
   drawPalette();
+  saveToFlagsUndoBuffer();
 }
 
 void draw(){
@@ -74,14 +85,38 @@ void clearFlags(){
 }
 
 void checkSelectFlag(){
-  if (mouseX >= 0 && mouseX <= 800 && mouseY >= 50 && mouseY <= 850){
+  if (keyPressed && keyCode == 16 && mouseButton == RIGHT)
+    selectColor = get(mouseX,mouseY);
+  else if (mouseX >= 0 && mouseX <= 800 && mouseY >= 50 && mouseY <= 850){
     if (mousePressed && (mouseButton == LEFT))
       if (selectFlagX < flagWidthHeight && selectFlagY < flagWidthHeight)
-        flags[selectFlagX][selectFlagY] = selectColor;
+        setFlag(selectFlagX, selectFlagY, selectColor);
+        
     if (mousePressed && (mouseButton == RIGHT))
       if (selectFlagX < flagWidthHeight && selectFlagY < flagWidthHeight)
         flags[selectFlagX][selectFlagY] = color(#000000);
   }
+}
+ 
+void setFlag(int x, int y, color c){
+  if (flags[x][y] != c){
+    flags[x][y] = c;
+    
+    saveToFlagsUndoBuffer();
+    
+    if (flagsUndoBuffer.size() > flagsUndoBufferMaxCountValue) 
+      flagsUndoBuffer.remove(0);
+    smashUndoBuffer();
+  }
+}
+
+void saveToFlagsUndoBuffer(){
+  color[][] newUndoArrayItem = new color[flagWidthHeight][flagWidthHeight];
+  for(int _x = 0; _x < flagWidthHeight; _x++)
+    for(int _y = 0; _y < flagWidthHeight; _y++)
+      newUndoArrayItem[_x][_y] = flags[_x][_y];
+      
+  flagsUndoBuffer.add(newUndoArrayItem);
 }
 
 void checkSelectColor(){
@@ -101,4 +136,79 @@ void checkSelectColor(){
     fill(flags[selectFlagX][selectFlagY]);
     rect(1000, 550, 100, 100);
   }
+}
+
+void keyPressed(){
+  if (key == ENTER) saveMatrixData();
+  if (keyCode == 37) undo();
+  if (keyCode == 39) redo();
+}
+
+int lastUndo = -1;
+void undo(){
+  if (lastUndo == -1 || lastUndo > flagsUndoBuffer.size()) 
+    lastUndo = flagsUndoBuffer.size() - 1;
+  else if (lastUndo > 0)
+    lastUndo--;
+  else
+    return;
+    
+  //println("lastUndo = " + lastUndo);
+  
+  if (lastUndo <= -1) return;
+  color[][] lastUndoArray = flagsUndoBuffer.get(lastUndo);
+  for(int x = 0; x < flagWidthHeight; x++)
+    for(int y = 0; y < flagWidthHeight; y++)
+      flags[x][y] = lastUndoArray[x][y];
+}
+
+void redo(){
+  if (lastUndo <= -1 || lastUndo >= flagsUndoBuffer.size()-1) return;
+  lastUndo++;
+  //println("lastUndo = " + lastUndo);
+  
+  color[][] lastUndoArray = flagsUndoBuffer.get(lastUndo);
+  for(int x = 0; x < flagWidthHeight; x++)
+    for(int y = 0; y < flagWidthHeight; y++)
+      flags[x][y] = lastUndoArray[x][y];
+}
+
+void smashUndoBuffer(){
+  if (lastUndo <= -1) return;
+  for (int i = flagsUndoBuffer.size(); i > lastUndo; i--)
+    if (i < flagsUndoBuffer.size())
+      flagsUndoBuffer.remove(i);
+  lastUndo = -1;
+}
+
+void saveMatrixData(){
+  output = createWriter("Frames\\frame-"+(getFilesCount("A:\\Александр\\Arduino прочее\\AMAE\\PixelPointer\\Frames", false)+1)+".txt");
+  
+  for (int x = 0; x < flagWidthHeight; x++) {
+    for (int y = 0; y < flagWidthHeight; y++) {
+      output.print(flags[x][y]+",");
+    }
+    output.println();
+  }
+  
+  output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+}
+
+int getFilesCount(String dirPath, boolean subdirectories) {
+  int count = 0;
+  File f = new File(dirPath);
+  File[] files = f.listFiles();
+  
+  if (files != null){
+    for (int i = 0; i < files.length; i++) {
+      count++;
+      File file = files[i];
+      
+      if (subdirectories && file.isDirectory()) {
+        count += getFilesCount(file.getAbsolutePath(), subdirectories); 
+      }
+    }
+  }
+  return count;
 }
