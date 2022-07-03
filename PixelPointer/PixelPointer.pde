@@ -89,11 +89,9 @@ void drawPalette(){
 }
 
 void clearFlags(){
-  for (int x = 0;x < flagWidthHeight;x++){
-    for (int y = 0;y < flagWidthHeight;y++){
+  for (int x = 0;x < flagWidthHeight;x++)
+    for (int y = 0;y < flagWidthHeight;y++)
       flags[x][y] = color(#000000);
-    }
-  }
 }
 
 void checkSelectFlag(){
@@ -199,6 +197,13 @@ void saveMatrixData(){
   
   output.flush(); // Writes the remaining data to the file
   output.close(); // Finishes the file
+}
+
+void clearMatrix(){
+  saveToFlagsUndoBuffer();
+  for(int x = 0; x < flagWidthHeight; x++)
+    for(int y = 0; y < flagWidthHeight; y++)
+      clearFlags();
 }
 
 int getFilesCount(String dirPath, boolean subdirectories) {

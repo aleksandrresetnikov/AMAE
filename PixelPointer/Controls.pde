@@ -14,8 +14,12 @@ class Control {
   public boolean Visible = true;
   
   // user input character:
-  public boolean Hover;
-  public boolean Press;
+  public boolean Hover = false;
+  public boolean Press = false;
+  
+  // user events:
+  public Action HoverAction;
+  public Action PressAction;
   
   public Control(int PosX, int PosY, int SizeX, int SizeY) {
     this.PosX = PosX;
@@ -82,10 +86,12 @@ class Control {
   protected void UpdateHoverStatys(){
     this.Hover = mouseX >= this.PosX && mouseX <= this.PosX + this.SizeX &&
                  mouseY >= this.PosY && mouseY <= this.PosY + this.SizeY;
+    if (this.HoverAction != null && this.Hover) HoverAction.Invoke();
   }
   
   protected void UpdatePressStatys(){
     this.Press = this.Hover && mousePressed;
+    if (this.PressAction != null && this.Press) PressAction.Invoke();
   }
   
   protected void SetColor(){
@@ -304,4 +310,8 @@ class Icon {
     this.HoverImage = HoverImage;
     this.PressImage = PressImage;
   }
+}
+
+interface Action {
+  public void Invoke();
 }
