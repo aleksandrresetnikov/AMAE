@@ -90,8 +90,8 @@ uint32_t loop_timer = millis();
 void loop() {
   loop_timer = millis();
 
-  sparklesRoutine();
-  paintSaveGif();
+  //sparklesRoutine();
+  //paintSaveGif();
   serverLoop();
 
   /*drawPixelXY(5, 8, CRGB::Red);
@@ -115,28 +115,35 @@ void printFPS(){
 void serverLoop(){
   WiFiClient client = server.available();
   if (!client) return;
-  //while (!client.available()) { }
+  while (!client.available()) { }
 
   String req = client.readStringUntil('\r');
+  client.flush();
 
-  if (req.indexOf("/home") != -1){
-    client.println("HTTP/1.1 200 OK");
-    client.println("Content-type:text/html");
-    client.println("Connection: close");
-    client.println();
-    client.println("<!DOCTYPE html>\n");
-    client.println("<html>\n");
-    client.println("<body>\n");
-    client.println("<center>\n");
-    client.println("<h1 style=\"color:blue;\">ESP32 webserver</h1>\n");
-    client.println("<h2 style=\"color:green;\">Hello World Web Sever</h2>\n");
-    client.println("<h2 style=\"color:blue;\">Password protected Web server</h2>\n");
-    client.println("</center>\n");
-    client.println("</body>\n");
-    client.println("</html>");
+  // parsing:
+  req[0] = ' ';
+  req.replace("HTTP/1.1", "");
+  req.replace("GET /", "");
+  req.replace("ET /", "");
+
+  int x = 0,
+      y = 0,
+      c = 0,
+      teg = 0;
+  String save = "";
+  for (int i = 0; i < req.length(); i++) {
+    if (req[i] == '_') {
+      if (teg == 0)x = save.toInt();
+      if (teg == 1)y = save.toInt();
+      if (teg == 2)c = save.toInt();
+      save = "";
+      teg++; continue;
+    }
+    if (teg >= 3)break;
+    save += req[i];
   }
 
-  client.flush();
+  drawPixelXY(x, y, c);
 }
 
 
