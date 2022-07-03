@@ -18,6 +18,11 @@ class Control {
   public boolean Press = false;
   
   // user events:
+  public int InvokeDelay = 750;
+  
+  public long HoverActionTimer = millis() + InvokeDelay;
+  public long PressActionTimer = millis() + InvokeDelay;
+  
   public Action HoverAction;
   public Action PressAction;
   
@@ -86,12 +91,12 @@ class Control {
   protected void UpdateHoverStatys(){
     this.Hover = mouseX >= this.PosX && mouseX <= this.PosX + this.SizeX &&
                  mouseY >= this.PosY && mouseY <= this.PosY + this.SizeY;
-    if (this.HoverAction != null && this.Hover) HoverAction.Invoke();
+    this.InvokeHoverAction();
   }
   
   protected void UpdatePressStatys(){
     this.Press = this.Hover && mousePressed;
-    if (this.PressAction != null && this.Press) PressAction.Invoke();
+    this.InvokePressAction();
   }
   
   protected void SetColor(){
@@ -112,6 +117,20 @@ class Control {
     if (this.Hover && !this.Press) stroke(this.Text.TextColors.HoverBorderColor);
     else if (this.Hover && this.Press) stroke(this.Text.TextColors.PressBorderColor);
     else stroke(this.Text.TextColors.NormalBorderColor);
+  }
+  
+  protected final void InvokeHoverAction(){
+    if (this.InvokeDelay > -1 && this.HoverActionTimer > millis()) return;
+    if (this.HoverAction != null && this.Hover) HoverAction.Invoke();
+    
+    this.HoverActionTimer = millis() + InvokeDelay;
+  }
+  
+  protected final void InvokePressAction(){
+    if (this.InvokeDelay > -1 && this.PressActionTimer > millis()) return;
+    if (this.PressAction != null && this.Press) PressAction.Invoke();
+    
+    this.PressActionTimer = millis() + InvokeDelay;
   }
 }
 

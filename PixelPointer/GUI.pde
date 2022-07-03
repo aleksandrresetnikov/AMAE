@@ -9,7 +9,7 @@ void initGUI(){
     new TextProperties("Clear", 18, new ColorsList(#ffffff, #ffffff, #ffffff), 
       createFont("Fonts\\WorkSans-Medium.ttf", 18)));
       
-  clearButton.HoverAction = new clearButtonHoverAction();
+  saveFrameButton.PressAction = new saveButtonPressAction();
   clearButton.PressAction = new clearButtonPressAction();
 }
 
@@ -28,10 +28,10 @@ void updateGUI(){
   }
 }
 
-public class clearButtonHoverAction implements Action {
+public class saveButtonPressAction implements Action {
   @Override
   public void Invoke() {
-    
+    saveMatrixData();
   }
 }
 
