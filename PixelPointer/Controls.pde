@@ -137,36 +137,86 @@ class Control {
 }
 
 class Button extends Control {
+  public Icon ButtonIcon;
+  
   public Button(int PosX, int PosY, int SizeX, int SizeY) {
     super(PosX, PosY, SizeX, SizeY);
+    this.ButtonIcon = null;
   }
   
   public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors) {
     super(PosX, PosY, SizeX, SizeY, Colors);
+    this.ButtonIcon = null;
   }
   
   public Button(int PosX, int PosY, int SizeX, int SizeY, TextProperties Text) {
     super(PosX, PosY, SizeX, SizeY, Text);
+    this.ButtonIcon = null;
   }
   
   public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, TextProperties Text) {
     super(PosX, PosY, SizeX, SizeY, Colors, Text);
+    this.ButtonIcon = null;
   }
   
   public Button(int PosX, int PosY, int SizeX, int SizeY, boolean Visible) {
     super(PosX, PosY, SizeX, SizeY, Visible);
+    this.ButtonIcon = null;
   }
   
   public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, boolean Visible) {
     super(PosX, PosY, SizeX, SizeY, Colors, Visible);
+    this.ButtonIcon = null;
   }
   
   public Button(int PosX, int PosY, int SizeX, int SizeY, TextProperties Text, boolean Visible) {
     super(PosX, PosY, SizeX, SizeY, Text, Visible);
+    this.ButtonIcon = null;
   }
   
   public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, TextProperties Text, boolean Visible) {
     super(PosX, PosY, SizeX, SizeY, Colors, Text, Visible);
+    this.ButtonIcon = null;
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, Icon ButtonIcon) {
+    super(PosX, PosY, SizeX, SizeY);
+    this.ButtonIcon = ButtonIcon;
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, Icon ButtonIcon) {
+    super(PosX, PosY, SizeX, SizeY, Colors);
+    this.ButtonIcon = ButtonIcon;
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, TextProperties Text, Icon ButtonIcon) {
+    super(PosX, PosY, SizeX, SizeY, Text);
+    this.ButtonIcon = ButtonIcon;
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, TextProperties Text, Icon ButtonIcon) {
+    super(PosX, PosY, SizeX, SizeY, Colors, Text);
+    this.ButtonIcon = ButtonIcon;
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, boolean Visible, Icon ButtonIcon) {
+    super(PosX, PosY, SizeX, SizeY, Visible);
+    this.ButtonIcon = ButtonIcon;
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, boolean Visible, Icon ButtonIcon) {
+    super(PosX, PosY, SizeX, SizeY, Colors, Visible);
+    this.ButtonIcon = ButtonIcon;
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, TextProperties Text, boolean Visible, Icon ButtonIcon) {
+    super(PosX, PosY, SizeX, SizeY, Text, Visible);
+    this.ButtonIcon = ButtonIcon;
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, TextProperties Text, boolean Visible, Icon ButtonIcon) {
+    super(PosX, PosY, SizeX, SizeY, Colors, Text, Visible);
+    this.ButtonIcon = ButtonIcon;
   }
   
   @Override
@@ -174,7 +224,23 @@ class Button extends Control {
     super.Draw();
     
     rect(super.PosX, super.PosY, super.SizeX, super.SizeY);
+    this.drawIcon();
     super.DrawText();
+  }
+  
+  private void drawIcon(){
+    if (this.ButtonIcon == null) return;
+    
+    DrawIcon();
+  }
+  
+  protected void DrawIcon(){
+    int IconX = super.PosX + (super.SizeX / 2) + (this.ButtonIcon.SizeX) + this.ButtonIcon.CorrectPosX;
+    int IconY = super.PosY + (super.SizeY / 2) + (this.ButtonIcon.SizeY) + this.ButtonIcon.CorrectPosY;
+    
+    if (super.Hover && !super.Press) image(this.ButtonIcon.HoverImage, IconX, IconY);
+    else if (super.Hover && super.Press) image(this.ButtonIcon.PressImage, IconX, IconY);
+    else image(this.ButtonIcon.NormalImage, IconX, IconY);
   }
 }
 
@@ -322,6 +388,12 @@ class TextProperties {
 }
 
 class Icon {
+  public int SizeX = 50;
+  public int SizeY = 50;
+  
+  public int CorrectPosX = 0;
+  public int CorrectPosY = 0;
+  
   public PImage NormalImage;
   public PImage HoverImage;
   public PImage PressImage;
@@ -330,6 +402,18 @@ class Icon {
     this.NormalImage = NormalImage;
     this.HoverImage = HoverImage;
     this.PressImage = PressImage;
+  }
+  
+  public Icon(PImage NormalImage, PImage HoverImage, PImage PressImage, int SizeX, int SizeY) {
+    this(NormalImage, HoverImage, PressImage);
+    this.SizeX = SizeX;
+    this.SizeY = SizeY;
+  }
+  
+  public Icon(PImage NormalImage, PImage HoverImage, PImage PressImage, int SizeX, int SizeY, int CorrectPosX, int CorrectPosY) {
+    this(NormalImage, HoverImage, PressImage, SizeX, SizeY);
+    this.CorrectPosX = CorrectPosX;
+    this.CorrectPosY = CorrectPosY;
   }
 }
 

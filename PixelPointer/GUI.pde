@@ -1,5 +1,6 @@
 Button saveFrameButton;
 Button clearButton;
+Button undoButton;
 
 void initGUI(){
   saveFrameButton = new Button(7, 7, 150, 35, new ColorsList(#5fa6e1, #5594c9, #4f8abc), 
@@ -36,6 +37,13 @@ public class saveButtonPressAction implements Action {
 }
 
 public class clearButtonPressAction implements Action {
+  @Override
+  public void Invoke() {
+    clearMatrix();
+  }
+}
+
+public class undoButtonPressAction implements Action {
   @Override
   public void Invoke() {
     clearMatrix();
