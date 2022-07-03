@@ -25,6 +25,7 @@ void setup(){
   drawInterface();
   drawPalette();
   saveToFlagsUndoBuffer();
+  initGUI();
 }
 
 void draw(){
@@ -32,6 +33,7 @@ void draw(){
   checkSelectFlag();
   updateSelectPixel();
   drawFlags();
+  drawGUI();
 }
 
 void updateSelectPixel(){

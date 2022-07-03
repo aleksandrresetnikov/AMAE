@@ -67,10 +67,10 @@ class Control {
   }
   
   protected void DrawText(){ 
-    textSize(Text.TextSize);
+    if (this.Text == null) return;
     
     this.SetTextColor();
-    
+    textSize(Text.TextSize);
     text(this.Text.Text, this.PosX, SizeY / 2 + (this.Text.TextSize / 2.5));
   }
   
@@ -99,6 +99,34 @@ class Control {
 class Button extends Control {
   public Button(int PosX, int PosY, int SizeX, int SizeY) {
     super(PosX, PosY, SizeX, SizeY);
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors) {
+    super(PosX, PosY, SizeX, SizeY, Colors);
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, TextProperties Text) {
+    super(PosX, PosY, SizeX, SizeY, Text);
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, TextProperties Text) {
+    super(PosX, PosY, SizeX, SizeY, Colors, Text);
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, boolean Visible) {
+    super(PosX, PosY, SizeX, SizeY, Visible);
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, boolean Visible) {
+    super(PosX, PosY, SizeX, SizeY, Colors, Visible);
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, TextProperties Text, boolean Visible) {
+    super(PosX, PosY, SizeX, SizeY, Text, Visible);
+  }
+  
+  public Button(int PosX, int PosY, int SizeX, int SizeY, ColorsList Colors, TextProperties Text, boolean Visible) {
+    super(PosX, PosY, SizeX, SizeY, Colors, Text, Visible);
   }
   
   @Override
