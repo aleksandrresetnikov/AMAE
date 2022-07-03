@@ -23,7 +23,8 @@ void fillAll(CRGB color) {
 }
 
 // функция отрисовки точки по координатам X Y
-void drawPixelXY(int8_t x, int8_t y, CRGB color) {
+void drawPixelXY(int8_t x, int8_t _y, CRGB color) {
+  int8_t y = HEIGHT - _y - 1;
   if (x < 0 || x > WIDTH - 1 || y < 0 || y > HEIGHT - 1) return;
   int thisPixel = getPixelNumber(x, y) * SEGMENTS;
   for (byte i = 0; i < SEGMENTS; i++) {
@@ -83,7 +84,8 @@ void fade() {
 
 void drawMap(CRGB bitmap[]){
   for (int i = 0; i < NUM_LEDS; i++) {
-    leds[i] = bitmap[i];
+    //leds[i] = bitmap[i];
+    drawPixelXY(i/WIDTH, i%HEIGHT, bitmap[i]);
   }
 }
 

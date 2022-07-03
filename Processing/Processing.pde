@@ -7,7 +7,7 @@ void setup(){
   size(640, 640);
   frameRate(120);
   
-  img = loadImage("img4.png");
+  img = loadImage("img7.bmp");
   img.resize(16, 16);
   //img.resize(640, 640);
   

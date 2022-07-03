@@ -1,6 +1,5 @@
 #include <ESP8266WiFi.h>
 #include <FastLED.h>
-#include <ESP8266WiFiMulti.h>
 
 #define WIDTH 16                      // ширина матрицы
 #define HEIGHT 16                     // высота матрицы
@@ -10,7 +9,7 @@
 #define CURRENT_LIMIT 0               // лимит по току в миллиамперах, автоматически управляет яркостью (пожалей свой блок питания!) 0 - выключить лимит
 
 #define CHIPSET NEOPIXEL
-#define FRAMES_PER_SECOND 60 //fps
+#define FRAMES_PER_SECOND 4 //fps
 
 #define DYNAMIC_RANDOM_NUMBERS 1      // динамическая генерация сида рандома
 #define DYNAMIC_RANDOM_TYPE 4         // тип динамической генерации сида рандома 1 - по времени, 2 - по времени2, 3 - по времени3, 4 - шум, 5 - свой сид
@@ -22,8 +21,7 @@ const char* password = "JeckDog093";
 
 uint8_t CentreX =  (WIDTH / 2) - 1;
 uint8_t CentreY = (HEIGHT / 2) - 1;
-ESP8266WiFiMulti wifiMulti;
-WiFiServer server(80);
+WiFiServer server(8888);
 CRGB leds[NUM_LEDS];
 byte brightness = BRIGHTNESS;
 
@@ -61,14 +59,16 @@ void setup() {
 
   Serial.begin(115200);
   WiFistart();
+  initGif();
 }
 
 void WiFistart() {
+  // Connect to WiFi network
   Serial.println();
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
-  
+
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -78,25 +78,29 @@ void WiFistart() {
   Serial.println("");
   Serial.println("WiFi connected");
 
-  Serial.print("LocalIP : ");
+  // Start the server
+  server.begin();
+  Serial.println("Server started");
+
+  // Print the IP address
   Serial.println(WiFi.localIP());
 }
 
 uint32_t loop_timer = millis();
 void loop() {
   loop_timer = millis();
-  
-  /*for (int8_t x = 0; x < WIDTH; x++)
-    for (int8_t y = 0; y < HEIGHT; y++)
-      drawPixelXY(x, y, 0xC144B2);*/
 
-  clearAll();
-  drawMap(bitmap);
-  serberLoop();
+  sparklesRoutine();
+  paintSaveGif();
+  serverLoop();
+
+  /*drawPixelXY(5, 8, CRGB::Red);
+  drawPixelXY(10, 1, CRGB::White);
+  drawPixelXY(10, 2, CRGB::Blue);*/
   
   FastLED.show();
   delayFPS();
-  //printFPS();
+  //printFPS(); // http://192.168.1.36:8888/
 }
 
 void delayFPS(){
@@ -108,12 +112,33 @@ void printFPS(){
   Serial.println(1000/(millis()-loop_timer));
 }
 
-void serberLoop(){
+void serverLoop(){
   WiFiClient client = server.available();
-  if (client.available()){
-    Serial.println(client.readStringUntil('\r'));
+  if (!client) return;
+  //while (!client.available()) { }
+
+  String req = client.readStringUntil('\r');
+
+  if (req.indexOf("/home") != -1){
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-type:text/html");
+    client.println("Connection: close");
+    client.println();
+    client.println("<!DOCTYPE html>\n");
+    client.println("<html>\n");
+    client.println("<body>\n");
+    client.println("<center>\n");
+    client.println("<h1 style=\"color:blue;\">ESP32 webserver</h1>\n");
+    client.println("<h2 style=\"color:green;\">Hello World Web Sever</h2>\n");
+    client.println("<h2 style=\"color:blue;\">Password protected Web server</h2>\n");
+    client.println("</center>\n");
+    client.println("</body>\n");
+    client.println("</html>");
   }
+
+  client.flush();
 }
+
 
 void sparklesRoutine() {
   for (byte i = 0; i < modes[0].scale; i++) {
