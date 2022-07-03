@@ -13,6 +13,7 @@ class Control {
   public TextProperties Text = null;
   public boolean Visible = true;
   
+  // user input character:
   public boolean Hover;
   public boolean Press;
   
@@ -70,8 +71,11 @@ class Control {
     if (this.Text == null) return;
     
     this.SetTextColor();
+    this.Text.SetFont();
     textSize(Text.TextSize);
-    text(this.Text.Text, this.PosX, SizeY / 2 + (this.Text.TextSize / 2.5));
+    textAlign(RIGHT);
+    text(this.Text.Text, this.PosX + this.SizeX / 2 + (textWidth(this.Text.Text) / 2),
+                         this.PosY + this.SizeY / 2.2 + (this.Text.TextSize / 2));
   }
   
   protected void UpdateHoverStatys(){
@@ -161,6 +165,7 @@ class TextProperties {
   public int TextSize = 10;
   public boolean TextVisible = false;
   public ColorsList TextColors = DefaultTextColorsList;
+  public PFont TextFont = null;
   
   public TextProperties(String Text) { 
     this.Text = Text;
@@ -194,5 +199,45 @@ class TextProperties {
   public TextProperties(String Text, int TextSize, ColorsList TextColors, boolean TextVisible) { 
     this(Text, TextSize, TextColors);
     this.TextVisible = TextVisible;
+  }
+  
+  public TextProperties(String Text, PFont TextFont) { 
+    this(Text);
+    this.TextFont = TextFont;
+  }
+  
+  public TextProperties(String Text, ColorsList TextColors, PFont TextFont) { 
+    this(Text, TextColors);
+    this.TextFont = TextFont;
+  }
+  
+  public TextProperties(String Text, int TextSize, PFont TextFont) { 
+    this(Text, TextSize);
+    this.TextFont = TextFont;
+  }
+  
+  public TextProperties(String Text, boolean TextVisible, PFont TextFont) { 
+    this(Text, TextVisible);
+    this.TextFont = TextFont;
+  }
+  
+  public TextProperties(String Text, int TextSize, ColorsList TextColors, PFont TextFont) { 
+    this(Text, TextSize, TextColors);
+    this.TextFont = TextFont;
+  }
+  
+  public TextProperties(String Text, int TextSize, boolean TextVisible, PFont TextFont) { 
+    this(Text, TextSize, TextVisible);
+    this.TextFont = TextFont;
+  }
+  
+  public TextProperties(String Text, int TextSize, ColorsList TextColors, boolean TextVisible, PFont TextFont) { 
+    this(Text, TextSize, TextColors, TextVisible);
+    this.TextFont = TextFont;
+  }
+  
+  public void SetFont(){
+    if (this.TextFont == null) return;
+    textFont(this.TextFont);
   }
 }
