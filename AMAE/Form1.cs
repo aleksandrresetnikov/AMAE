@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace AMAE
 {
@@ -20,6 +21,7 @@ namespace AMAE
         int selectX = 0, selectY = 0;
         Color SelectColor = Color.White;
         int selectFrame = 1;
+        bool MatrixStreamLoop = false;
 
         public Form1()
         {
@@ -30,6 +32,14 @@ namespace AMAE
             Text = selectFrame.ToString();
 
             CreateBitmap();
+
+            Thread matrixStreamThread = new Thread(MatrixLoop);
+            matrixStreamThread.Start();
+        }
+
+        public void MatrixLoop()
+        {
+            
         }
 
         public void CreateBitmap()
@@ -166,6 +176,11 @@ namespace AMAE
             if (listView1.SelectedItems.Count <= 0) return;
             this.selectFrame = (int)listView1.SelectedItems[0].Tag;
             Text = selectFrame.ToString();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            MatrixStreamLoop = checkBox1.Checked;
         }
 
         private void button4_Click(object sender, EventArgs e)

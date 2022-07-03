@@ -99,7 +99,7 @@ void loop() {
   drawPixelXY(10, 2, CRGB::Blue);*/
   
   FastLED.show();
-  delayFPS();
+  //delayFPS();
   //printFPS(); // http://192.168.1.36:8888/
 }
 
@@ -112,6 +112,7 @@ void printFPS(){
   Serial.println(1000/(millis()-loop_timer));
 }
 
+int _step;
 void serverLoop(){
   WiFiClient client = server.available();
   if (!client) return;
@@ -126,26 +127,31 @@ void serverLoop(){
   req.replace("GET /", "");
   req.replace("ET /", "");
 
-  int x = 0,
-      y = 0,
-      c = 0,
-      teg = 0;
-  String save = "";
-  for (int i = 0; i < req.length(); i++) {
-    if (req[i] == '_') {
-      if (teg == 0)x = save.toInt();
-      if (teg == 1)y = save.toInt();
-      if (teg == 2)c = save.toInt();
-      save = "";
-      teg++; continue;
+  int parts = 256;
+
+  for (int s = 0; s < parts; s++){
+    yield();
+    String inText = getPart(req, ',', s);
+    int x = 0,
+        y = 0,
+        c = 0,
+        teg = 0;
+    String save = "";
+    for (int i = 0; i < inText.length(); i++) {
+      if (inText[i] == '_') {
+        if (teg == 0)x = save.toInt();
+        if (teg == 1)y = save.toInt();
+        if (teg == 2)c = save.toInt();
+        save = "";
+        teg++; continue;
+      }
+      if (teg >= 3)break;
+      save += inText[i];
     }
-    if (teg >= 3)break;
-    save += req[i];
+
+    drawPixelXY(x, y, c);
   }
-
-  drawPixelXY(x, y, c);
 }
-
 
 void sparklesRoutine() {
   for (byte i = 0; i < modes[0].scale; i++) {
@@ -171,4 +177,20 @@ void fadePixel(byte i, byte j, byte step) {
     leds[pixelNum].fadeToBlackBy(step);
   else
     leds[pixelNum] = 0;
+}
+
+String getPart(String text, char del, int index) {
+  int found = 0;
+  int sInd[] = {0, -1};
+  int mInd = text.length()-1;
+
+  for(int i=0; i<=mInd && found<=index; i++){
+    if(text.charAt(i)==del || i==mInd){
+      found++;
+      sInd[0] = sInd[1]+1;
+      sInd[1] = (i == mInd) ? i+1 : i;
+    }
+  }
+
+  return found>index ? text.substring(sInd[0], sInd[1]) : "";
 }

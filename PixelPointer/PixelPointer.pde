@@ -5,6 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.DirectoryStream;
 import java.util.*;
 
+import http.requests.*;
+import java.net.*;
+
 final int flagWidthHeight = 16;
 final int flagsUndoBufferMaxCountValue = 1500;
 
@@ -40,6 +43,7 @@ void keyPressed(){
   if (key == ENTER) saveMatrixData();
   if (keyCode == 37) undo();
   if (keyCode == 39) redo();
+  if (keyCode == 32) sendMatrix();
 }
 
 void mousePressed(){
