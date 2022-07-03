@@ -1,5 +1,5 @@
-public final ColorsList DefaultColorsList     = new ColorsList(#FAFAFA, #D1D1D1, #A7A7A7);
-public final ColorsList DefaultTextColorsList = new ColorsList(#1F1F1F, #434242, #FFFFFF);
+public final ColorsList DefaultColorsList     = new ColorsList(#FAFAFA, #D1D1D1, #A7A7A7, #FFFFFF, #FFFFFF, #FFFFFF);
+public final ColorsList DefaultTextColorsList = new ColorsList(#1F1F1F, #434242, #FFFFFF, #FFFFFF, #FFFFFF, #1F1F1F);
 
 class Control {
   // location:
@@ -147,16 +147,59 @@ class ColorsList{
   public color HoverColor;
   public color PressColor;
   
+  public color NormalBorderColor;
+  public color HoverBorderColor;
+  public color PressBorderColor;
+  
+  public boolean DrawBorders = true;
+  
   public ColorsList(){
     this.NormalColor = DefaultColorsList.NormalColor;
     this.HoverColor  = DefaultColorsList.HoverColor;
     this.PressColor  = DefaultColorsList.PressColor;
+    this.NormalColor = DefaultColorsList.NormalBorderColor;
+    this.HoverColor  = DefaultColorsList.HoverBorderColor;
+    this.PressColor  = DefaultColorsList.PressBorderColor;
   }
   
   public ColorsList(color NormalColor, color HoverColor, color PressColor){
     this.NormalColor = NormalColor;
     this.HoverColor  = HoverColor;
     this.PressColor  = PressColor;
+    this.NormalColor = DefaultColorsList.NormalBorderColor;
+    this.HoverColor  = DefaultColorsList.HoverBorderColor;
+    this.PressColor  = DefaultColorsList.PressBorderColor;
+  }
+  
+  public ColorsList(color NormalColor, color HoverColor, color PressColor, 
+  color NormalBorderColor, color HoverBorderColor, color PressBorderColor){
+    this.NormalColor = NormalColor;
+    this.HoverColor  = HoverColor;
+    this.PressColor  = PressColor;
+    this.NormalBorderColor = NormalBorderColor;
+    this.HoverBorderColor  = HoverBorderColor;
+    this.PressBorderColor  = PressBorderColor;
+  }
+  
+  public ColorsList(color NormalColor, color HoverColor, color PressColor, boolean DrawBorders){
+    this.NormalColor = NormalColor;
+    this.HoverColor  = HoverColor;
+    this.PressColor  = PressColor;
+    this.NormalColor = DefaultColorsList.NormalBorderColor;
+    this.HoverColor  = DefaultColorsList.HoverBorderColor;
+    this.PressColor  = DefaultColorsList.PressBorderColor;
+    this.DrawBorders = DrawBorders;
+  }
+  
+  public ColorsList(color NormalColor, color HoverColor, color PressColor, 
+  color NormalBorderColor, color HoverBorderColor, color PressBorderColor, boolean DrawBorders){
+    this.NormalColor = NormalColor;
+    this.HoverColor  = HoverColor;
+    this.PressColor  = PressColor;
+    this.NormalBorderColor = NormalBorderColor;
+    this.HoverBorderColor  = HoverBorderColor;
+    this.PressBorderColor  = PressBorderColor;
+    this.DrawBorders = DrawBorders;
   }
 }
 
