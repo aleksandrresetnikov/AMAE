@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
+using System.Drawing;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -9,7 +9,7 @@ namespace AMAE
 {
     class BinDataSerialization
     {
-        public Dictionary<int, Color[][]> Open(string Path)
+        public static Dictionary<int, Color[][]> Open(string Path)
         {
             if (!File.Exists(Path)) throw new FileNotFoundException();
 
@@ -25,7 +25,7 @@ namespace AMAE
             }
         }
 
-        public void Save(Dictionary<int, Color[][]> bitmaps, string path)
+        public static void Save(Dictionary<int, Color[][]> bitmaps, string path)
         {
             //new Thread(() => {
             using (Stream stream = new FileStream(path, FileMode.Create))

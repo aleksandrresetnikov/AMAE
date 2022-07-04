@@ -23,6 +23,7 @@ namespace AMAE
         int selectX = 0, selectY = 0;
         Color SelectColor = Color.White;
         int selectFrame = 1;
+        bool MatrixStream = true;
         bool MatrixStreamLoop = false;
 
         public Form1()
@@ -44,19 +45,19 @@ namespace AMAE
             UInt64 loopCount = 0;
             Random random = new Random();
             int frame = 1;
-            while (true) 
+            while (MatrixStream) 
             {
                 if (!MatrixStreamLoop) continue;
                 Console.WriteLine(++loopCount);
 
                 string outputHttpGetValue = "http://192.168.1.36:8888/";
-                for (int _x = 15; _x >= 0; _x--)
+                for (int _x = _Size-1; _x >= 0; _x--)
                 {
                     if (_x % 2 != 0)
-                        for (int _y = 0; _y < 16; _y++)
+                        for (int _y = 0; _y < _Size; _y++)
                             outputHttpGetValue += $"{bitmaps[frame][_y][_x].ToArgb()},";
                     else
-                        for (int _y = 15; _y >= 0; _y--)
+                        for (int _y = _Size-1; _y >= 0; _y--)
                             outputHttpGetValue += $"{bitmaps[frame][_y][_x].ToArgb()},";
                 }
                 //Console.WriteLine(outputHttpGetValue);
@@ -210,7 +211,80 @@ namespace AMAE
 
         private void button1_Click(object sender, EventArgs e)
         {
+            try
+            {
+                saveFileDialog1.Filter = "Bitmaps Data Files (*.bmpsd;*.bmd)|*.bmpsd;*.bmd";
+                saveFileDialog1.Title = "Сохранить кадры как";
+                DialogResult dialog = saveFileDialog1.ShowDialog();
 
+                if (dialog == DialogResult.OK)
+                {
+                    BinDataSerialization.Save(bitmaps, saveFileDialog1.FileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        } // save
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                openFileDialog1.Filter = "Bitmaps Data Files (*.bmpsd;*.bmd)|*.bmpsd;*.bmd";
+                saveFileDialog1.Title = "Открыть кадры";
+                DialogResult dialog = openFileDialog1.ShowDialog();
+
+                if (dialog == DialogResult.OK)
+                {
+                    selectFrame = 1;
+                    bitmaps = BinDataSerialization.Open(openFileDialog1.FileName);
+                    listView1.Items.Clear();
+                    foreach (int item in bitmaps.Keys)
+                        listView1.Items.Add(new ListViewItem("Кадр " + item) { Tag = item });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        } // open
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                openFileDialog1.Filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG";
+                openFileDialog1.Title = "Загрузить изображение";
+                DialogResult dialog = openFileDialog1.ShowDialog();
+
+                if (dialog == DialogResult.OK)
+                {
+                    Image img = Image.FromFile(openFileDialog1.FileName);
+                    Bitmap bmp = new Bitmap(img, new Size(_Size, _Size));
+                    Color[][] bmpFrame = new Color[_Size][];
+                    for (int i = 0; i < _Size; i++)
+                        bmpFrame[i] = new Color[_Size];
+
+                    for (int x = 0; x < _Size; x++)
+                        for (int y = 0; y < _Size; y++)
+                            bmpFrame[x][y] = bmp.GetPixel(x, y);
+
+                    selectFrame = bitmaps.Count + 1;
+                    listView1.Items.Add(new ListViewItem($"Кадр {selectFrame}") { Tag = selectFrame });
+                    bitmaps.Add(selectFrame, bmpFrame);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        } // image import
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.MatrixStream = false;
         }
 
         private static string HttpGet(string URI)
