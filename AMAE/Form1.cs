@@ -4,6 +4,7 @@ using System.Net;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace AMAE
         int selectFrame = 1;
         bool MatrixStream = true;
         bool MatrixStreamLoop = false;
+        bool MatrixStreamSave = false;
 
         public Form1()
         {
@@ -51,33 +53,36 @@ namespace AMAE
             {
                 try
                 {
-                    if (!MatrixStreamLoop) continue;
-                    Console.WriteLine(++loopCount);
+                    if (!MatrixStreamLoop || MatrixStreamSave) continue;
+                    //Console.WriteLine(++loopCount);
 
-                    string outputHttpGetValue = matrixIP + (frame-1).ToString() + ",";
-                    for (int _x = _Size - 1; _x >= 0; _x--)
-                    {
-                        //if (_x % 2 != 0)
-                            for (int _y = 0; _y < _Size; _y++)
-                                outputHttpGetValue += $"{FormateColor(bitmaps[frame][_y][_x])},";
-                        /*else
-                            for (int _y = _Size - 1; _y >= 0; _y--)
-                                outputHttpGetValue += $"{FormateColor(bitmaps[frame][_y][_x])},";*/
-                    }
-                    //Console.WriteLine(outputHttpGetValue);
-                    HttpGet(outputHttpGetValue);
+                    //string outputHttpGetValue = matrixIP + (frame-1).ToString() + ",";
+                    //for (int _x = _Size - 1; _x >= 0; _x--)
+                    //{
+                    //    //if (_x % 2 != 0)
+                    //        for (int _y = 0; _y < _Size; _y++)
+                    //            outputHttpGetValue += $"{FormateColor(bitmaps[frame][_y][_x])},";
+                    //    /*else
+                    //        for (int _y = _Size - 1; _y >= 0; _y--)
+                    //            outputHttpGetValue += $"{FormateColor(bitmaps[frame][_y][_x])},";*/
+                    //}
+                    ////Console.WriteLine(outputHttpGetValue);
+                    //HttpGet(outputHttpGetValue);
 
-                    frame++;
-                    if (frame > bitmaps.Count || frame >= Convert.ToInt32(textBox3.Text) - 1) {
-                        //frame = 1; 
-                        int _frame = 0;
-                        for (; ; )
-                        {
-                            HttpGet(matrixIP + "FRAME_" + _frame + "_");
-                            _frame++; if (_frame >= frame - 1) _frame = 0;
-                            Thread.Sleep(50);
-                        }
-                    }
+                    //frame++;
+                    //if (frame > bitmaps.Count || frame >= Convert.ToInt32(textBox3.Text) - 1) {
+                    //    //frame = 1; 
+                    //    int _frame = 0;
+                    //    for (; ; )
+                    //    {
+                    //        HttpGet(matrixIP + "FRAME_" + _frame + "_");
+                    //        _frame++; if (_frame >= frame - 1) _frame = 0;
+                    //        Thread.Sleep(50);
+                    //    }
+                    //}
+                    HttpGet(matrixIP + "FRAME_" + frame + "_");
+                    frame++; if (frame >= bitmaps.Count/* - 1*/) frame = 0;
+                    Thread.Sleep(Convert.ToInt32(textBox4.Text));
                 }
                 catch (Exception) { }
             }
@@ -186,18 +191,22 @@ namespace AMAE
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            int coefficient = (pictureBox1.Width / _Size);
-            selectX = (e.X / coefficient);
-            selectY = (e.Y / coefficient);
-            this.label6.Text = bitmaps[selectFrame][selectX][selectY].ToArgb().ToString();
-
-            // draw select pixel:
-            /*using (Graphics g = this.pictureBox1.CreateGraphics())
+            try
             {
-                if (selectX >= _Size || selectY >= _Size) return;
-                g.DrawRectangle(new Pen(new SolidBrush(Color.White), 2),
-                    new Rectangle(selectX * coefficient, selectY * coefficient, pictureBox1.Width / _Size, pictureBox1.Width / _Size));
-            }*/
+                int coefficient = (pictureBox1.Width / _Size);
+                selectX = (e.X / coefficient);
+                selectY = (e.Y / coefficient);
+                this.label6.Text = bitmaps[selectFrame][selectX][selectY].ToArgb().ToString();
+
+                // draw select pixel:
+                /*using (Graphics g = this.pictureBox1.CreateGraphics())
+                {
+                    if (selectX >= _Size || selectY >= _Size) return;
+                    g.DrawRectangle(new Pen(new SolidBrush(Color.White), 2),
+                        new Rectangle(selectX * coefficient, selectY * coefficient, pictureBox1.Width / _Size, pictureBox1.Width / _Size));
+                }*/
+            }
+            catch (Exception ex) { }
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -539,8 +548,56 @@ namespace AMAE
                 listView1.Items.Add(new ListViewItem("Кадр " + item) { Tag = item });
         } // remove frame
 
+        private void progressBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (MatrixStreamSave) 
+            {
+                MessageBox.Show("Дынные уже отправляются, пожалуйста подождите.", "Проблемма.",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            MatrixStreamSave = true;
+            int frame = 1;
+
+            Task.Run(() => {
+                while (true)
+                {
+                    string outputHttpGetValue = matrixIP + (frame - 1).ToString() + ",";
+                    for (int _x = _Size - 1; _x >= 0; _x--)
+                    {
+                        //if (_x % 2 != 0)
+                        for (int _y = 0; _y < _Size; _y++)
+                            outputHttpGetValue += $"{FormateColor(bitmaps[frame][_y][_x])},";
+                        /*else
+                            for (int _y = _Size - 1; _y >= 0; _y--)
+                                outputHttpGetValue += $"{FormateColor(bitmaps[frame][_y][_x])},";*/
+                    }
+                    //Console.WriteLine(outputHttpGetValue);
+                    HttpGet(outputHttpGetValue);
+                    BeginInvoke((Action)delegate {
+                        int endStepValue = (int)((float)((float)frame -1) / bitmaps.Count * 100) ;
+                        Console.WriteLine($"{frame-1} - {endStepValue}%");
+                        progressBar1.Value = endStepValue;
+                    });
+
+                    frame++;
+                    if (frame > bitmaps.Count || frame >= Convert.ToInt32(textBox3.Text) - 0) break;
+                }
+                BeginInvoke((Action)delegate {
+                    MatrixStreamSave = false;
+                });
+            });
+        } // зарузить
+
         private static Image[] getFrames(Image originalImg)
         {
+
             int numberOfFrames = originalImg.GetFrameCount(FrameDimension.Time);
             Image[] frames = new Image[numberOfFrames];
 
