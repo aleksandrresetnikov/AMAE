@@ -7,6 +7,7 @@ using System.Threading;
 using System.Net;
 using System.IO;
 
+
 namespace AMAE
 {
     public partial class Form1 : Form
@@ -297,10 +298,15 @@ namespace AMAE
             matrixIP = textBox1.Text;
         }
 
+        private bool useColor = false;
         private void p_red_TextChanged(object sender, EventArgs e)
         {
+            if (useColor) return;
+
             try
             {
+                useColor = true;
+
                 int red = Convert.ToInt32(p_red.Text);
 
                 this.SelectColor = Color.FromArgb(red, this.SelectColor.G, this.SelectColor.B);
@@ -311,28 +317,111 @@ namespace AMAE
             }
             catch (Exception ex)
             {
-                p_red.Text = "255";
+                p_red.Text = this.SelectColor.R.ToString();
             }
+
+            useColor = false;
         }
 
         private void p_green_TextChanged(object sender, EventArgs e)
         {
+            if (useColor) return;
 
+            try
+            {
+                useColor = true;
+
+                int green = Convert.ToInt32(p_green.Text);
+
+                this.SelectColor = Color.FromArgb(this.SelectColor.R, green, this.SelectColor.B);
+                this.p_dec.Text = this.SelectColor.ToArgb().ToString();
+                this.p_hex.Text = HexConverter(this.SelectColor);
+
+                this.pictureBox2.BackColor = this.SelectColor;
+            }
+            catch (Exception ex)
+            {
+                p_green.Text = this.SelectColor.G.ToString();
+            }
+
+            useColor = false;
         }
 
         private void p_blue_TextChanged(object sender, EventArgs e)
         {
+            if (useColor) return;
 
+            try
+            {
+                useColor = true;
+
+                int blue = Convert.ToInt32(p_blue.Text);
+
+                this.SelectColor = Color.FromArgb(this.SelectColor.R, this.SelectColor.G, blue);
+                this.p_dec.Text = this.SelectColor.ToArgb().ToString();
+                this.p_hex.Text = HexConverter(this.SelectColor);
+
+                this.pictureBox2.BackColor = this.SelectColor;
+            }
+            catch (Exception ex)
+            {
+                p_blue.Text = this.SelectColor.B.ToString();
+            }
+
+            useColor = false;
         }
 
         private void p_dec_TextChanged(object sender, EventArgs e)
         {
+            if (useColor) return;
 
+            try
+            {
+                useColor = true;
+
+                int dec = Convert.ToInt32(p_dec.Text);
+
+                this.SelectColor = Color.FromArgb(dec);
+                this.p_red.Text = this.SelectColor.R.ToString();
+                this.p_green.Text = this.SelectColor.G.ToString();
+                this.p_blue.Text = this.SelectColor.B.ToString();
+                this.p_hex.Text = HexConverter(this.SelectColor);
+
+                this.pictureBox2.BackColor = this.SelectColor;
+            }
+            catch (Exception ex)
+            {
+                p_dec.Text = this.SelectColor.ToArgb().ToString();
+            }
+
+            useColor = false;
         }
 
         private void p_hex_TextChanged(object sender, EventArgs e)
         {
+            if (useColor) return;
 
+            try
+            {
+                useColor = true;
+
+                Color color = (Color)new ColorConverter().ConvertFromString(p_hex.Text);
+
+                this.SelectColor = color;
+                this.p_red.Text = this.SelectColor.R.ToString();
+                this.p_green.Text = this.SelectColor.G.ToString();
+                this.p_blue.Text = this.SelectColor.B.ToString();
+                this.p_dec.Text = this.SelectColor.ToArgb().ToString();
+                
+
+                this.pictureBox2.BackColor = this.SelectColor;
+            }
+            catch (Exception ex)
+            {
+                p_hex.Text = HexConverter(this.SelectColor);
+            }
+
+            useColor = false;
         }
 
         private static string HttpGet(string URI)
