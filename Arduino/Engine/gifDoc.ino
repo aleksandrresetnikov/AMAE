@@ -35,7 +35,6 @@
   };*/
    
 
-CRGB gifBitmap_mask[60][256];
 byte rows = 2;
 
 void drawGif(CRGB gifBitmap[][256]);
@@ -48,12 +47,9 @@ void paintSaveGif(){
   drawGif(gifBitmap_mask);
 }
 
-int frame = 0;
 void drawGif(CRGB _gifBitmap[][256]){
-  drawMap(_gifBitmap[frame]);
-    
-  frame++;
-  if(frame >= rows) frame = 0;
-
-  Serial.println(frame);
+  if (curentSaveFrame != -1 && curentSaveFrame == gif_select_frame) return;
+  
+  drawMap(_gifBitmap[gif_select_frame]);
+  Serial.println(gif_select_frame);
 }

@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Windows.Forms;
-using System.Threading;
-using System.Net;
 using System.IO;
+using System.Net;
+using System.Drawing;
+using System.Threading;
+using System.Windows.Forms;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
+using System.Collections.Generic;
 
 namespace AMAE
 {
@@ -49,25 +49,55 @@ namespace AMAE
             int frame = 1;
             while (MatrixStream) 
             {
-                if (!MatrixStreamLoop) continue;
-                Console.WriteLine(++loopCount);
-
-                string outputHttpGetValue = matrixIP;
-                for (int _x = _Size-1; _x >= 0; _x--)
+                try
                 {
-                    if (_x % 2 != 0)
-                        for (int _y = 0; _y < _Size; _y++)
-                            outputHttpGetValue += $"{bitmaps[frame][_y][_x].ToArgb()},";
-                    else
-                        for (int _y = _Size-1; _y >= 0; _y--)
-                            outputHttpGetValue += $"{bitmaps[frame][_y][_x].ToArgb()},";
-                }
-                Console.WriteLine(outputHttpGetValue);
-                HttpGet(outputHttpGetValue);
+                    if (!MatrixStreamLoop) continue;
+                    Console.WriteLine(++loopCount);
 
-                frame++;
-                if (frame > bitmaps.Count) frame = 1;
+                    string outputHttpGetValue = matrixIP + (frame-1).ToString() + ",";
+                    for (int _x = _Size - 1; _x >= 0; _x--)
+                    {
+                        //if (_x % 2 != 0)
+                            for (int _y = 0; _y < _Size; _y++)
+                                outputHttpGetValue += $"{FormateColor(bitmaps[frame][_y][_x])},";
+                        /*else
+                            for (int _y = _Size - 1; _y >= 0; _y--)
+                                outputHttpGetValue += $"{FormateColor(bitmaps[frame][_y][_x])},";*/
+                    }
+                    //Console.WriteLine(outputHttpGetValue);
+                    HttpGet(outputHttpGetValue);
+
+                    frame++;
+                    if (frame > bitmaps.Count || frame >= Convert.ToInt32(textBox3.Text) - 1) {
+                        //frame = 1; 
+                        int _frame = 0;
+                        for (; ; )
+                        {
+                            HttpGet(matrixIP + "FRAME_" + _frame + "_");
+                            _frame++; if (_frame >= frame - 1) _frame = 0;
+                            Thread.Sleep(50);
+                        }
+                    }
+                }
+                catch (Exception) { }
             }
+        }
+
+        public int FormateColor(Color color)
+        {
+            try
+            {
+                string[] filter = textBox2.Text.Split(',');
+
+                foreach (string filterItem in filter)
+                {
+                    int filterItemColor = Convert.ToInt32(filterItem);
+                    if (color.ToArgb() == filterItemColor) return Color.Black.ToArgb();
+                }
+
+                return color.ToArgb();
+            }
+            catch (Exception) { return color.ToArgb(); }
         }
 
         public void CreateBitmap()
@@ -110,6 +140,7 @@ namespace AMAE
                 {
                     for (int y = 0; y < _Size; y++)
                     {
+                        if (!this.bitmaps.ContainsKey(selectFrame)) selectFrame++;
                         Gbmp.SetPixel(x, y, this.bitmaps[selectFrame][x][y]);
                     }
                 }
@@ -158,6 +189,7 @@ namespace AMAE
             int coefficient = (pictureBox1.Width / _Size);
             selectX = (e.X / coefficient);
             selectY = (e.Y / coefficient);
+            this.label6.Text = bitmaps[selectFrame][selectX][selectY].ToArgb().ToString();
 
             // draw select pixel:
             /*using (Graphics g = this.pictureBox1.CreateGraphics())
@@ -491,7 +523,20 @@ namespace AMAE
 
         private void button6_Click(object sender, EventArgs e)
         {
+            Dictionary<int, Color[][]> _bitmaps = new Dictionary<int, Color[][]>();
 
+            this.bitmaps.Remove(selectFrame);
+
+            int frameStep = 1;
+            foreach (var v in bitmaps.Values) 
+            {
+                _bitmaps.Add(frameStep++, v);
+            }
+
+            this.bitmaps = _bitmaps;
+            listView1.Items.Clear();
+            foreach (int item in bitmaps.Keys)
+                listView1.Items.Add(new ListViewItem("Кадр " + item) { Tag = item });
         } // remove frame
 
         private static Image[] getFrames(Image originalImg)

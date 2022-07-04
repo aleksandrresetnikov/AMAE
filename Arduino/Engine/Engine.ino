@@ -24,12 +24,16 @@ uint8_t CentreY = (HEIGHT / 2) - 1;
 WiFiServer server(8888);
 CRGB leds[NUM_LEDS];
 byte brightness = BRIGHTNESS;
+int gif_select_frame = 0;
+int curentSaveFrame = -1;
 
 struct {
   byte brightness = BRIGHTNESS;
   byte speed = 1;
   byte scale = 40;
 } modes[1];
+
+CRGB gifBitmap_mask[42][256];
 
 CRGB bitmap[] = {
 0,-3355444,-3355444,-3355444,-3355444,-3355444,-6720871,-10664867,-10664867,-10664867,-10664867,-10664867,-10664867,-6720871,-3355444,-3355444,
@@ -126,11 +130,30 @@ void serverLoop(){
   req.replace("GET /", "");
   req.replace("ET /", "");
 
-  int parts = 256;
+  if (req.indexOf("FRAME") != -1){
+    String save = "";
+    int teg = 0;
+    for (int i = 0; i < req.length(); i++) {
+      yield();
+      if (req[i] == '_') {
+        if (teg == 1)gif_select_frame = save.toInt();
+        save = "";
+        teg++; continue;
+      }
+      if (teg >= 2)break;
+      save += req[i];
+    }
+    paintSaveGif();
+    FastLED.show();
+    return;
+  }
 
+  int parts = 257;
+  int selectFrame = 0;
   for (int s = 0; s < parts; s++){
     yield();
     String inText = getPart(req, ',', s);
+    if (s == 0) { selectFrame = inText.toInt(); continue; }
     /*int x = 0,
         y = 0,
         c = 0,
@@ -149,8 +172,10 @@ void serverLoop(){
     }
 
     drawPixelXY(x, y, c);*/
-    leds[s] = inText.toInt();
+    //leds[s-1] = inText.toInt();
+    gifBitmap_mask[selectFrame][s-1] = inText.toInt();
   }
+  curentSaveFrame = -1;
   FastLED.show();
 }
 
