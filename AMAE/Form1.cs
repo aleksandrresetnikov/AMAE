@@ -19,6 +19,7 @@ namespace AMAE
         }
 
         Dictionary<int, Color[][]> bitmaps = new Dictionary<int, Color[][]>();
+        string matrixIP = "http://192.168.1.36:8888/";
         bool mouseDownState = false;
         int selectX = 0, selectY = 0;
         Color SelectColor = Color.White;
@@ -50,7 +51,7 @@ namespace AMAE
                 if (!MatrixStreamLoop) continue;
                 Console.WriteLine(++loopCount);
 
-                string outputHttpGetValue = "http://192.168.1.36:8888/";
+                string outputHttpGetValue = matrixIP;
                 for (int _x = _Size-1; _x >= 0; _x--)
                 {
                     if (_x % 2 != 0)
@@ -257,23 +258,27 @@ namespace AMAE
             {
                 openFileDialog1.Filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG";
                 openFileDialog1.Title = "Загрузить изображение";
+                openFileDialog1.Multiselect = true;
                 DialogResult dialog = openFileDialog1.ShowDialog();
 
                 if (dialog == DialogResult.OK)
                 {
-                    Image img = Image.FromFile(openFileDialog1.FileName);
-                    Bitmap bmp = new Bitmap(img, new Size(_Size, _Size));
-                    Color[][] bmpFrame = new Color[_Size][];
-                    for (int i = 0; i < _Size; i++)
-                        bmpFrame[i] = new Color[_Size];
+                    foreach (string item in openFileDialog1.FileNames)
+                    {
+                        Image img = Image.FromFile(item);
+                        Bitmap bmp = new Bitmap(img, new Size(_Size, _Size));
+                        Color[][] bmpFrame = new Color[_Size][];
+                        for (int i = 0; i < _Size; i++)
+                            bmpFrame[i] = new Color[_Size];
 
-                    for (int x = 0; x < _Size; x++)
-                        for (int y = 0; y < _Size; y++)
-                            bmpFrame[x][y] = bmp.GetPixel(x, y);
+                        for (int x = 0; x < _Size; x++)
+                            for (int y = 0; y < _Size; y++)
+                                bmpFrame[x][y] = bmp.GetPixel(x, y);
 
-                    selectFrame = bitmaps.Count + 1;
-                    listView1.Items.Add(new ListViewItem($"Кадр {selectFrame}") { Tag = selectFrame });
-                    bitmaps.Add(selectFrame, bmpFrame);
+                        selectFrame = bitmaps.Count + 1;
+                        listView1.Items.Add(new ListViewItem($"Кадр {selectFrame}") { Tag = selectFrame });
+                        bitmaps.Add(selectFrame, bmpFrame);
+                    }
                 }
             }
             catch (Exception ex)
@@ -285,6 +290,49 @@ namespace AMAE
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.MatrixStream = false;
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            matrixIP = textBox1.Text;
+        }
+
+        private void p_red_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                int red = Convert.ToInt32(p_red.Text);
+
+                this.SelectColor = Color.FromArgb(red, this.SelectColor.G, this.SelectColor.B);
+                this.p_dec.Text = this.SelectColor.ToArgb().ToString();
+                this.p_hex.Text = HexConverter(this.SelectColor);
+
+                this.pictureBox2.BackColor = this.SelectColor;
+            }
+            catch (Exception ex)
+            {
+                p_red.Text = "255";
+            }
+        }
+
+        private void p_green_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void p_blue_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void p_dec_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void p_hex_TextChanged(object sender, EventArgs e)
+        {
+
         }
 
         private static string HttpGet(string URI)
@@ -307,6 +355,16 @@ namespace AMAE
             {
                 return "#nodata";
             }
+        }
+
+        private static String HexConverter(System.Drawing.Color c)
+        {
+            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+        }
+
+        private static String RGBConverter(System.Drawing.Color c)
+        {
+            return "RGB(" + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString() + ")";
         }
     }
 }
