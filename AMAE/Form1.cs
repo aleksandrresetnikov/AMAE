@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Threading;
 using System.Net;
 using System.IO;
-
 
 namespace AMAE
 {
@@ -62,7 +62,7 @@ namespace AMAE
                         for (int _y = _Size-1; _y >= 0; _y--)
                             outputHttpGetValue += $"{bitmaps[frame][_y][_x].ToArgb()},";
                 }
-                //Console.WriteLine(outputHttpGetValue);
+                Console.WriteLine(outputHttpGetValue);
                 HttpGet(outputHttpGetValue);
 
                 frame++;
@@ -451,9 +451,61 @@ namespace AMAE
             return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
 
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                openFileDialog1.Filter = "Gif File(*.GIF)|*.GIF";
+                openFileDialog1.Title = "Загрузить gif изображение";
+                DialogResult dialog = openFileDialog1.ShowDialog();
+
+                if (dialog == DialogResult.OK)
+                {
+                    foreach (Image img in getFrames(Image.FromFile(openFileDialog1.FileName)))
+                    {
+                        Bitmap bmp = new Bitmap(img, new Size(_Size, _Size));
+                        Color[][] bmpFrame = new Color[_Size][];
+                        for (int i = 0; i < _Size; i++)
+                            bmpFrame[i] = new Color[_Size];
+
+                        for (int x = 0; x < _Size; x++)
+                            for (int y = 0; y < _Size; y++)
+                                bmpFrame[x][y] = bmp.GetPixel(x, y);
+
+                        selectFrame = bitmaps.Count + 1;
+                        listView1.Items.Add(new ListViewItem($"Кадр {selectFrame}") { Tag = selectFrame });
+                        bitmaps.Add(selectFrame, bmpFrame);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        } // gif import 
+
         private static String RGBConverter(System.Drawing.Color c)
         {
             return "RGB(" + c.R.ToString() + "," + c.G.ToString() + "," + c.B.ToString() + ")";
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        } // remove frame
+
+        private static Image[] getFrames(Image originalImg)
+        {
+            int numberOfFrames = originalImg.GetFrameCount(FrameDimension.Time);
+            Image[] frames = new Image[numberOfFrames];
+
+            for (int i = 0; i < numberOfFrames; i++)
+            {
+                originalImg.SelectActiveFrame(FrameDimension.Time, i);
+                frames[i] = ((Image)originalImg.Clone());
+            }
+
+            return frames;
         }
     }
 }

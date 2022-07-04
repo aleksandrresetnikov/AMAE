@@ -55,6 +55,7 @@ namespace AMAE
             this.p_dec = new System.Windows.Forms.TextBox();
             this.p_hex = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.button6 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -97,7 +98,7 @@ namespace AMAE
             this.button4.BackColor = System.Drawing.SystemColors.Window;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button4.Location = new System.Drawing.Point(640, 490);
+            this.button4.Location = new System.Drawing.Point(640, 455);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(170, 29);
             this.button4.TabIndex = 4;
@@ -119,6 +120,7 @@ namespace AMAE
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.button6);
             this.splitContainer1.Panel2.Controls.Add(this.p_hex);
             this.splitContainer1.Panel2.Controls.Add(this.label5);
             this.splitContainer1.Panel2.Controls.Add(this.p_dec);
@@ -162,7 +164,7 @@ namespace AMAE
             this.button1.BackColor = System.Drawing.SystemColors.Window;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(640, 455);
+            this.button1.Location = new System.Drawing.Point(640, 420);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(170, 29);
             this.button1.TabIndex = 7;
@@ -200,7 +202,7 @@ namespace AMAE
             this.button2.BackColor = System.Drawing.SystemColors.Window;
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button2.Location = new System.Drawing.Point(640, 420);
+            this.button2.Location = new System.Drawing.Point(640, 385);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(170, 29);
             this.button2.TabIndex = 8;
@@ -236,8 +238,9 @@ namespace AMAE
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(170, 29);
             this.button5.TabIndex = 10;
-            this.button5.Text = "Пипетка";
+            this.button5.Text = "Импорт GIF";
             this.button5.UseVisualStyleBackColor = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // p_red
             // 
@@ -344,6 +347,20 @@ namespace AMAE
             this.label5.TabIndex = 19;
             this.label5.Text = "Hex:";
             // 
+            // button6
+            // 
+            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button6.BackColor = System.Drawing.SystemColors.Window;
+            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button6.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button6.Location = new System.Drawing.Point(640, 490);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(170, 29);
+            this.button6.TabIndex = 21;
+            this.button6.Text = "Удалить кадр";
+            this.button6.UseVisualStyleBackColor = false;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -392,6 +409,7 @@ namespace AMAE
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox p_red;
+        private System.Windows.Forms.Button button6;
     }
 }
 
