@@ -191,11 +191,6 @@ namespace AMAE
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listView1.SelectedItems.Count <= 0) return;
@@ -211,6 +206,11 @@ namespace AMAE
         private void button4_Click(object sender, EventArgs e)
         {
             CreateBitmap();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
 
         private static string HttpGet(string URI)
